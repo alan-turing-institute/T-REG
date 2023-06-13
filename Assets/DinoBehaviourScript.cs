@@ -79,18 +79,27 @@ public class DinoBehaviourScript : Agent
     }
     public override void OnEpisodeBegin()
     {
-       // If the Agent fell, zero its momentum
-        // if (this.transform.localPosition.y < 0)
-        // {
+        // If the Agent fell, zero its momentum
+        print("OnEpisodeBegin");
+
+        //Reset all of the body parts
+        foreach (var bodyPart in m_JdController.bodyPartsDict.Values)
+        {
+            bodyPart.Reset(bodyPart);
+        }
+
+        if (this.transform.localPosition.y < 0)
+        {
             // this.rBody.angularVelocity = Vector3.zero;
             // this.rBody.velocity = Vector3.zero;
-            // this.transform.localPosition = new Vector3( 0, 0.5f, 0);
-        // }
+            this.transform.localPosition = new Vector3( 0, 0.5f, 0);
+        }
 
         // Move the target to a new spot
         // Target.position = new Vector3(Random.value * 8 - 4,
-                                        //    5f,
-                                        //    Random.value * 8 - 4);
+        //                                 5f,
+        //                                 Random.value * 8 - 4);
+        SetResetParameters();
     }
 
     public void SetResetParameters()
@@ -154,7 +163,8 @@ public class DinoBehaviourScript : Agent
             SetReward(1.0f);
             EndEpisode();
         }
-        else if (distanceToTarget > 30f)
+        // else if (distanceToTarget > 30f)
+        else if (distanceToTarget > 80f)
         {
             SetReward(-1f);
             EndEpisode();
