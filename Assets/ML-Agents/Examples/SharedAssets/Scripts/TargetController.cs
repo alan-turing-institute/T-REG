@@ -24,6 +24,9 @@ namespace Unity.MLAgentsExamples
         public bool respawnIfFallsOffPlatform = true; //If the target falls off the platform, reset the position.
         public float fallDistance = 5; //distance below the starting height that will trigger a respawn 
 
+        [Header("Cube Movement")]
+        public float cubeSpeed = 0.001f;
+        public float cubeRoleSpeed = 0.5f;
 
         private Vector3 m_startingPos; //the starting position of the target
         private Agent m_agentTouching; //the agent currently touching the target
@@ -60,6 +63,11 @@ namespace Unity.MLAgentsExamples
 
         void Update()
         {
+            // moving the cube
+            transform.position = new Vector3(0, cubeSpeed, cubeSpeed);
+            // rotating the cube
+            transform.rotation = new Vector3(0, cubeRoleSpeed, cubeRoleSpeed);
+
             if (respawnIfFallsOffPlatform)
             {
                 if (transform.position.y < m_startingPos.y - fallDistance)
