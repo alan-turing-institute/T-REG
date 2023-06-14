@@ -55,6 +55,10 @@ public class DinoBehaviourScript : Agent
     JointDriveController m_JdController;
     EnvironmentParameters m_ResetParams;
 
+    // position and distance to target
+    private Vector3 lastPosition;
+    private float lastDistanceToTarget;
+
     public override void Initialize()
     {
         m_OrientationCube = GetComponentInChildren<OrientationCubeController>();
@@ -100,6 +104,10 @@ public class DinoBehaviourScript : Agent
         //                                 5f,
         //                                 Random.value * 8 - 4);
         SetResetParameters();
+
+        // get position and distance to target
+        lastPosition = neck.transform.position;
+        lastDistanceToTarget = Vector3.Distance(neck.transform.position, Target.position);
     }
 
     public void SetResetParameters()
@@ -135,40 +143,30 @@ public class DinoBehaviourScript : Agent
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        // print("in onactionreceived");
+        // let's move the legs (rotation between -90 and 90 degrees)
         var bpDict = m_JdController.bodyPartsDict;
-        // var i = -1;
-
         var continuousActions = actionBuffers.ContinuousActions;
-        // bpDict[thighR].SetJointTargetRotation(90f, 90f, 90f);
-        // bpDict[thighL].SetJointTargetRotation(90f, 90f, 90f);
-        // print("Setting target rotation to" + continuousActions[0]);
-        bpDict[thighR].SetJointTargetRotation(continuousActions[0], continuousActions[0], continuousActions[0]);
-        bpDict[thighL].SetJointTargetRotation(continuousActions[1], continuousActions[1], continuousActions[1]);
-        // bpDict[thighL].SetJointTargetRotation(continuousActions[++i], continuousActions[++i], continuousActions[++i]);
 
-        //update joint strength settings
-        // bpDict[thighR].SetJointStrength(continuousActions[++i]);
-        // bpDict[thighL].SetJointStrength(continuousActions[++i]);
+        float thighR_target_rotation = Mathf.Clamp(continuousActions[0] * 90, -90, 90);
+        float thighL_target_rotation = Mathf.Clamp(continuousActions[1] * 90, -90, 90);
+
+        bpDict[thighR].SetJointTargetRotation(thighR_target_rotation, thighR_target_rotation, thighR_target_rotation);
+        bpDict[thighL].SetJointTargetRotation(thighL_target_rotation, thighL_target_rotation, thighL_target_rotation);
+
         bpDict[thighR].SetJointStrength(1f);
         bpDict[thighL].SetJointStrength(1f);
-        // bpDict[thighL].SetJointStrength(500000f);
         
-        float distanceToTarget = Vector3.Distance(neck.transform.position, Target.position);
-        print("distanceToTarget "+distanceToTarget);
-        // Reached target
-        if (distanceToTarget < 10f)
+        // calculate reward
+        float currentDistanceToTarget = Vector3.Distance(neck.transform.position, Target.position);
+        float distanceDifference = lastDistanceToTarget - currentDistanceToTarget;
+
+        // only reward the agent if it got closer to the target
+        if (distanceDifference > 0)
         {
-            // print("ending episode");
-            SetReward(1.0f);
-            EndEpisode();
+            AddReward(distanceDifference * 0.1f);  // Multiplication factor can be adjusted as per needs
         }
-        // else if (distanceToTarget > 30f)
-        else if (distanceToTarget > 80f)
-        {
-            SetReward(-1f);
-            EndEpisode();
-        }
+
+        lastDistanceToTarget = currentDistanceToTarget;
     }
     public override void Heuristic(in ActionBuffers actionsOut)
     {
