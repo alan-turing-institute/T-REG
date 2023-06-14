@@ -2,8 +2,8 @@
   "dependencies": {
     "com.unity.ide.rider": "3.0.14",
     "com.unity.inputsystem": "1.3.0",
-    "com.unity.ml-agents": "file:/Users/nbarlow/ml-agents/com.unity.ml-agents",
-    "com.unity.ml-agents.extensions": "file:/Users/nbarlow/ml-agents/com.unity.ml-agents.extensions",
+    "com.unity.ml-agents": "file:/Users/mstoffel/turing/projects/ml-agents/com.unity.ml-agents",
+    "com.unity.ml-agents.extensions": "file:/Users/mstoffel/turing/projects/ml-agents/com.unity.ml-agents.extensions",
     "com.unity.nuget.newtonsoft-json": "3.0.2",
     "com.unity.recorder": "3.0.3",
     "com.unity.test-framework": "1.1.31",
