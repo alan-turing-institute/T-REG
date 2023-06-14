@@ -11,7 +11,7 @@ namespace Unity.MLAgentsExamples
     [DisallowMultipleComponent]
     public class GroundContact : MonoBehaviour
     {
-        [HideInInspector] public Agent agent;
+        public Agent agent;
 
         [Header("Ground Check")] public bool agentDoneOnGroundContact; // Whether to reset agent on ground contact.
         public bool penalizeGroundContact; // Whether to penalize on contact.
@@ -24,6 +24,8 @@ namespace Unity.MLAgentsExamples
         /// </summary>
         void OnCollisionEnter(Collision col)
         {
+            // print("OnCollisionEnter");
+            // print(gameObject.name);
             if (col.transform.CompareTag(k_Ground))
             {
                 touchingGround = true;

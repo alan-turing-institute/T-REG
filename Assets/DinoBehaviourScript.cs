@@ -81,6 +81,7 @@ public class DinoBehaviourScript : Agent
     {
         // If the Agent fell, zero its momentum
         print("OnEpisodeBegin");
+        print((new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().Name);
 
         //Reset all of the body parts
         foreach (var bodyPart in m_JdController.bodyPartsDict.Values)
@@ -118,18 +119,95 @@ public class DinoBehaviourScript : Agent
 
     //     }
 
+
+    // Copied from WalkerAgent.cs
+    //Returns the average velocity of all of the body parts
+    //Using the velocity of the hips only has shown to result in more erratic movement from the limbs, so...
+    //...using the average helps prevent this erratic movement
+    Vector3 GetAvgVelocity()
+    {
+        Vector3 velSum = Vector3.zero;
+
+        //ALL RBS
+        int numOfRb = 0;
+        foreach (var item in m_JdController.bodyPartsList)
+        {
+            numOfRb++;
+            velSum += item.rb.velocity;
+        }
+
+        var avgVel = velSum / numOfRb;
+        return avgVel;
+    }
+
+    /// <summary>
+    /// Add relevant information on each body part to observations.
+    /// Note: this method was copied from WalkerAgent.cs equivalent with minor
+    /// modifications.
+    /// </summary>
+    public void CollectObservationBodyPart(BodyPart bp, VectorSensor sensor)
+    {
+        //GROUND CHECK
+        sensor.AddObservation(bp.groundContact.touchingGround); // Is this bp touching the ground
+
+        //Get velocities in the context of our orientation cube's space
+        //Note: You can get these velocities in world space as well but it may not train as well.
+        sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(bp.rb.velocity));
+        sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(bp.rb.angularVelocity));
+
+        //Get position relative to `but` in the context of our orientation cube's space
+        sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(bp.rb.position - but.position));
+
+        if (bp.rb.transform != but && bp.rb.transform != thighL && bp.rb.transform != thighR)
+        {
+            sensor.AddObservation(bp.rb.transform.localRotation);
+            sensor.AddObservation(bp.currentStrength / m_JdController.maxJointForceLimit);
+        }
+    }
+
+    /// <summary>
+    /// Loop over body parts to add them to observation.
+    /// Note: this method was copied from WalkerAgent.cs equivalent with minor
+    /// modifications.
+    /// </summary>
     public override void CollectObservations(VectorSensor sensor)
     {
         // print("in CollectObservations");
-        sensor.AddObservation(0);
-        sensor.AddObservation(0);
-        sensor.AddObservation(0);
-        sensor.AddObservation(0);
-        sensor.AddObservation(0);
-        sensor.AddObservation(0);
-        sensor.AddObservation(0);
-        sensor.AddObservation(0);
-        sensor.AddObservation(0);
+        // sensor.AddObservation(0);
+        // sensor.AddObservation(0);
+        // sensor.AddObservation(0);
+        // sensor.AddObservation(0);
+        // sensor.AddObservation(0);
+        // sensor.AddObservation(0);
+        // sensor.AddObservation(0);
+        // sensor.AddObservation(0);
+        // sensor.AddObservation(0);
+
+        var cubeForward = m_OrientationCube.transform.forward;
+
+        //velocity we want to match
+        var velGoal = cubeForward * MTargetWalkingSpeed;
+        //Dino's avg vel
+        var avgVel = GetAvgVelocity();
+
+        //current Dino velocity. normalized
+        sensor.AddObservation(Vector3.Distance(velGoal, avgVel));
+        //avg body vel relative to cube
+        sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(avgVel));
+        //vel goal relative to cube
+        sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(velGoal));
+
+        //rotation deltas
+        sensor.AddObservation(Quaternion.FromToRotation(but.forward, cubeForward));
+        sensor.AddObservation(Quaternion.FromToRotation(but.forward, cubeForward));
+
+        //Position of target position relative to cube
+        sensor.AddObservation(m_OrientationCube.transform.InverseTransformPoint(target.transform.position));
+
+        foreach (var bodyPart in m_JdController.bodyPartsList)
+        {
+            CollectObservationBodyPart(bodyPart, sensor);
+        }
     }
 
 
@@ -155,9 +233,9 @@ public class DinoBehaviourScript : Agent
         // bpDict[thighL].SetJointStrength(500000f);
         
         float distanceToTarget = Vector3.Distance(neck.transform.position, Target.position);
-        print("distanceToTarget "+distanceToTarget);
+        // print("distanceToTarget "+distanceToTarget);
         // Reached target
-        if (distanceToTarget < 10f)
+        if (distanceToTarget < 1f)
         {
             // print("ending episode");
             SetReward(1.0f);
@@ -170,6 +248,12 @@ public class DinoBehaviourScript : Agent
             EndEpisode();
         }
     }
+
+    /// <summary>
+    /// This method is repeatedly called when the TRex simulator is run in Unity
+    /// without any RL. In essence, the method is called when the TRex is not being
+    /// controlled by RL or a pre-trained model
+    /// </summary>
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var continuousActionsOut = actionsOut.ContinuousActions;
