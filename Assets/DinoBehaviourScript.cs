@@ -153,8 +153,8 @@ public class DinoBehaviourScript : Agent
         bpDict[thighR].SetJointTargetRotation(thighR_target_rotation, thighR_target_rotation, thighR_target_rotation);
         bpDict[thighL].SetJointTargetRotation(thighL_target_rotation, thighL_target_rotation, thighL_target_rotation);
 
-        bpDict[thighR].SetJointStrength(1f);
-        bpDict[thighL].SetJointStrength(1f);
+        bpDict[thighR].SetJointStrength(0.1f);
+        bpDict[thighL].SetJointStrength(0.1f);
         
         // calculate reward
         float currentDistanceToTarget = Vector3.Distance(neck.transform.position, Target.position);
@@ -163,7 +163,9 @@ public class DinoBehaviourScript : Agent
         // only reward the agent if it got closer to the target
         if (distanceDifference > 0)
         {
-            AddReward(distanceDifference * 0.1f);  // Multiplication factor can be adjusted as per needs
+            AddReward(distanceDifference * 0.1f);  // positive reward when getting closer
+        } else {
+            AddReward(distanceDifference * 0.01f);  // negative reward when getting further away
         }
 
         lastDistanceToTarget = currentDistanceToTarget;
