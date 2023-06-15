@@ -62,9 +62,10 @@ namespace Unity.MLAgentsExamples
         {
             if (respawnIfFallsOffPlatform)
             {
-                if (transform.position.y < m_startingPos.y - fallDistance)
+                if (transform.position.y < (m_startingPos.y - fallDistance))
                 {
                     Debug.Log($"{transform.name} Fell Off Platform");
+                    print($"{transform.name} Fell Off Platform");
                     MoveTargetToRandomPosition();
                 }
             }

@@ -14,7 +14,7 @@ public class DinoBehaviourScript : Agent
     private float left_action;
     private float right_action;
     private GameObject neck;
-    public Transform Target;
+    // public Transform target;
 
     [Header("Body Parts")]
     public Transform thighL;
@@ -118,7 +118,7 @@ public class DinoBehaviourScript : Agent
 
          // Randomized starting position on episode reset. Best to keep Y tight. 
         float randomX = UnityEngine.Random.Range(20f, 25f); 
-        float randomY = UnityEngine.Random.Range(22f, 24f); 
+        float randomY = UnityEngine.Random.Range(20f, 22f); 
         float randomZ = UnityEngine.Random.Range(-15f, -10f); 
         this.transform.localPosition = new Vector3(randomX, randomY, randomZ); 
 
@@ -133,11 +133,12 @@ public class DinoBehaviourScript : Agent
         // Target.position = new Vector3(Random.value * 8 - 4,
         //                                 5f,
         //                                 Random.value * 8 - 4);
+        target.transform.localPosition = new Vector3(22, 3, 40);
         SetResetParameters();
 
         // get position and distance to target
         lastPosition = neck.transform.position;
-        lastDistanceToTarget = Vector3.Distance(neck.transform.position, Target.position);
+        lastDistanceToTarget = Vector3.Distance(neck.transform.position, target.position);
     }
 
     public void SetResetParameters()
@@ -274,7 +275,7 @@ public class DinoBehaviourScript : Agent
         // Scaling 
         AddReward(balance * 0.1f);
 
-        float distanceToTarget = Vector3.Distance(neck.transform.position, Target.position);
+        float distanceToTarget = Vector3.Distance(neck.transform.position, target.position);
         // print("distanceToTarget "+distanceToTarget);
         // Reached target
         if (distanceToTarget < 1f) {
@@ -295,7 +296,7 @@ public class DinoBehaviourScript : Agent
         }
 
         // calculate reward
-        float currentDistanceToTarget = Vector3.Distance(neck.transform.position, Target.position);
+        float currentDistanceToTarget = Vector3.Distance(neck.transform.position, target.position);
         float distanceDifference = lastDistanceToTarget - currentDistanceToTarget;
 
         // only reward the agent if it got closer to the target
