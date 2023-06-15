@@ -114,8 +114,14 @@ public class DinoBehaviourScript : Agent
         }
 
         // Fixed starting position on episode reset.
-        // TODO: implement randomized start position.
-        this.transform.localPosition = new Vector3(22, 25, -12); 
+        // this.transform.localPosition = new Vector3(22, 25, -12); 
+
+         // Randomized starting position on episode reset. Best to keep Y tight. 
+        float randomX = UnityEngine.Random.Range(20f, 25f); 
+        float randomY = UnityEngine.Random.Range(22f, 24f); 
+        float randomZ = UnityEngine.Random.Range(-15f, -10f); 
+        this.transform.localPosition = new Vector3(randomX, randomY, randomZ); 
+
         // if (this.transform.localPosition.y < 0)
         // {
         //     // this.rBody.angularVelocity = Vector3.zero;
@@ -265,8 +271,8 @@ public class DinoBehaviourScript : Agent
         // Calculate dot product between up vector for 'but' and the world's up vector.
         // This will be 1 when 'but' is exactly upright, and less than 1 as 'but' tilts.
         float balance = Vector3.Dot(but.up, Vector3.up);
-        // You may want to add a scaling factor here to adjust the reward.
-        AddReward(balance * 0.2f);
+        // Scaling 
+        AddReward(balance * 0.1f);
 
         float distanceToTarget = Vector3.Distance(neck.transform.position, Target.position);
         // print("distanceToTarget "+distanceToTarget);
@@ -301,8 +307,8 @@ public class DinoBehaviourScript : Agent
         }
 
         // standing upright bonus
-        var uprightBonus = but.up.y;
-        AddReward(uprightBonus * 0.05f);
+        // var uprightBonus = but.up.y;
+        // AddReward(uprightBonus * 0.05f);
 
         // penalize too much movement
         // var continuousActionsOut = actionsOut.ContinuousActions;
