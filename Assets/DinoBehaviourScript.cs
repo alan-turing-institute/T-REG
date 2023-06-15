@@ -22,7 +22,7 @@ public class DinoBehaviourScript : Agent
     public Transform shinL;
     public Transform shinR;
     public Transform but;
-    // public Transform tail_1;
+    public Transform tail_1;
 
 
     [Header("Walk Speed")]
@@ -85,7 +85,7 @@ public class DinoBehaviourScript : Agent
         m_JdController.SetupBodyPart(thighL);
         m_JdController.SetupBodyPart(shinR);
         m_JdController.SetupBodyPart(shinL);
-        // m_JdController.SetupBodyPart(tail_1);
+        m_JdController.SetupBodyPart(tail_1);
 
         m_ResetParams = Academy.Instance.EnvironmentParameters;
 
@@ -264,9 +264,9 @@ public class DinoBehaviourScript : Agent
         bpDict[thighL].SetJointStrength(0.1f);
         
         // tail movement
-        // float tail1_target_rotation = Mathf.Clamp(continuousActions[2] * 90, -90, 90);
-        // bpDict[tail_1].SetJointTargetRotation(tail1_target_rotation, tail1_target_rotation, tail1_target_rotation);
-        // bpDict[tail_1].SetJointStrength(0.1f);
+        float tail1_target_rotation = Mathf.Clamp(continuousActions[2] * 90, -90, 90);
+        bpDict[tail_1].SetJointTargetRotation(tail1_target_rotation, tail1_target_rotation, tail1_target_rotation);
+        bpDict[tail_1].SetJointStrength(0.1f);
 
         // Add a reward for balance.
         // Calculate dot product between up vector for 'but' and the world's up vector.
