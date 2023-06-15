@@ -281,10 +281,18 @@ public class DinoBehaviourScript : Agent
         // only reward the agent if it got closer to the target
         if (distanceDifference > 0)
         {
-            AddReward(distanceDifference * 0.1f);  // positive reward when getting closer
+            AddReward(distanceDifference * 1f);  // positive reward when getting closer
         } else {
-            AddReward(distanceDifference * 0.01f);  // negative reward when getting further away
+            AddReward(distanceDifference * 0.1f);  // negative reward when getting further away
         }
+
+        // standing upright bonus
+        var uprightBonus = but.up.y;
+        AddReward(uprightBonus * 0.2f);
+
+        // penalize too much movement
+        float jointMovementCost = continuousActionsOut[0] * continuousActionsOut[1] * -0.01f;
+        AddReward(jointMovementCost);
 
         lastDistanceToTarget = currentDistanceToTarget;
 
