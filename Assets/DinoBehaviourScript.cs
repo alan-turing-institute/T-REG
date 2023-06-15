@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
@@ -26,7 +28,7 @@ public class DinoBehaviourScript : Agent
     [Range(0.1f, 10)]
     [SerializeField]
     //The walking speed to try and achieve
-    private float m_TargetWalkingSpeed = 1;
+    private float m_TargetWalkingSpeed = 10;
 
     public float MTargetWalkingSpeed // property
     {
@@ -34,7 +36,7 @@ public class DinoBehaviourScript : Agent
         set { m_TargetWalkingSpeed = Mathf.Clamp(value, .1f, m_maxWalkingSpeed); }
     }
 
-    const float m_maxWalkingSpeed = 1; //The max walking speed
+    const float m_maxWalkingSpeed = 10; //The max walking speed
 
     //Should the agent sample a new goal velocity each episode?
     //If true, walkSpeed will be randomly set between zero and m_maxWalkingSpeed in OnEpisodeBegin()
@@ -59,8 +61,18 @@ public class DinoBehaviourScript : Agent
     private Vector3 lastPosition;
     private float lastDistanceToTarget;
 
+    // to keep track of number of steps agent has taken in an episode
+    private int episode_steps = 0;
+    private int max_episode_steps = 1000;
+
+    private List<Rigidbody> all_rigid_bodies = new List<Rigidbody>();
+
     public override void Initialize()
     {
+        FindAllRigidBodies find_rigid_bodies = GetComponent<FindAllRigidBodies>();
+        all_rigid_bodies = find_rigid_bodies.CountBodies();
+        print("DinoAgent.Initialize: list of rigid bodies: " + all_rigid_bodies.Count);
+
         m_OrientationCube = GetComponentInChildren<OrientationCubeController>();
         m_DirectionIndicator = GetComponentInChildren<DirectionIndicator>();
 
@@ -84,8 +96,14 @@ public class DinoBehaviourScript : Agent
     public override void OnEpisodeBegin()
     {
         // If the Agent fell, zero its momentum
-        print("OnEpisodeBegin");
-        print((new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().Name);
+        print("DinoAgent.OnEpisodeBegin. My caller: " + (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().Name);
+
+        foreach (var rb in all_rigid_bodies) {
+            // rb.transform.position = bp.startingPos;
+            // rb.transform.rotation = bp.startingRot;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
 
         //Reset all of the body parts
         foreach (var bodyPart in m_JdController.bodyPartsDict.Values)
@@ -93,12 +111,14 @@ public class DinoBehaviourScript : Agent
             bodyPart.Reset(bodyPart);
         }
 
-        this.transform.localPosition = new Vector3( 12f, 20f, -12f);
+        // Fixed starting position on episode reset.
+        // TODO: implement randomized start position.
+        this.transform.localPosition = new Vector3(22, 25, -12); 
         // if (this.transform.localPosition.y < 0)
         // {
         //     // this.rBody.angularVelocity = Vector3.zero;
         //     // this.rBody.velocity = Vector3.zero;
-        //     this.transform.localPosition = new Vector3( 10f, 20.3f, -10f);
+        //     this.transform.localPosition = new Vector3( 0, 0.5f, 0);
         // }
 
         // Move the target to a new spot
@@ -120,7 +140,7 @@ public class DinoBehaviourScript : Agent
     public void SetTorsoMass()
     {
         m_JdController.bodyPartsDict[but].rb.mass = m_ResetParams.GetWithDefault("chest_mass", 8);
-        print("Chest mass is " + m_JdController.bodyPartsDict[but].rb.mass);
+        // print("Chest mass is " + m_JdController.bodyPartsDict[but].rb.mass);
     }
 
     //     void Start(){
@@ -219,7 +239,6 @@ public class DinoBehaviourScript : Agent
         }
     }
 
-
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         // let's move the legs (rotation between -90 and 90 degrees)
@@ -232,20 +251,28 @@ public class DinoBehaviourScript : Agent
         bpDict[thighR].SetJointTargetRotation(thighR_target_rotation, thighR_target_rotation, thighR_target_rotation);
         bpDict[thighL].SetJointTargetRotation(thighL_target_rotation, thighL_target_rotation, thighL_target_rotation);
 
-        bpDict[thighR].SetJointStrength(1f);
-        bpDict[thighL].SetJointStrength(1f);
+        bpDict[thighR].SetJointStrength(0.1f);
+        bpDict[thighL].SetJointStrength(0.1f);
         
         float distanceToTarget = Vector3.Distance(neck.transform.position, Target.position);
         // print("distanceToTarget "+distanceToTarget);
         // Reached target
-        // if (distanceToTarget < 1f) {
-        //     SetReward(1.0f);
-        //     EndEpisode();
-        // }
+        if (distanceToTarget < 1f) {
+            SetReward(1.0f);
+            EndEpisode();
+
+            // reset steps counter
+            this.episode_steps = 0;
+        }
         // else if (distanceToTarget > 80f) {
-        //     SetReward(-1f);
-        //     EndEpisode();
-        // }
+        else if (distanceToTarget > 150f) {
+            print("Distance to target: " + distanceToTarget);
+            SetReward(-1f);
+            EndEpisode();
+
+            // reset steps counter
+            this.episode_steps = 0;
+        }
 
         // calculate reward
         float currentDistanceToTarget = Vector3.Distance(neck.transform.position, Target.position);
@@ -260,6 +287,16 @@ public class DinoBehaviourScript : Agent
         }
 
         lastDistanceToTarget = currentDistanceToTarget;
+
+        this.episode_steps += 1;
+        if (this.episode_steps >= this.max_episode_steps){
+            print("DinoAgent: Maximum episode steps reached. End episode and reset.");
+            SetReward(-1f);
+            EndEpisode();
+
+            // reset steps counter
+            this.episode_steps = 0;
+        }
     }
 
     /// <summary>
@@ -289,7 +326,7 @@ public class DinoBehaviourScript : Agent
     }
     private void OnCollisionEnter(Collision collision) {
         print("collided");
-        SetReward(-1f);
-        EndEpisode();
+        //EndEpisode();
+
     }
 }
