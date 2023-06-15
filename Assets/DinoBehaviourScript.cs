@@ -22,6 +22,7 @@ public class DinoBehaviourScript : Agent
     public Transform shinL;
     public Transform shinR;
     public Transform but;
+    // public Transform tail_1;
 
 
     [Header("Walk Speed")]
@@ -84,6 +85,7 @@ public class DinoBehaviourScript : Agent
         m_JdController.SetupBodyPart(thighL);
         m_JdController.SetupBodyPart(shinR);
         m_JdController.SetupBodyPart(shinL);
+        // m_JdController.SetupBodyPart(tail_1);
 
         m_ResetParams = Academy.Instance.EnvironmentParameters;
 
@@ -254,6 +256,18 @@ public class DinoBehaviourScript : Agent
         bpDict[thighR].SetJointStrength(0.1f);
         bpDict[thighL].SetJointStrength(0.1f);
         
+        // tail movement
+        // float tail1_target_rotation = Mathf.Clamp(continuousActions[2] * 90, -90, 90);
+        // bpDict[tail_1].SetJointTargetRotation(tail1_target_rotation, tail1_target_rotation, tail1_target_rotation);
+        // bpDict[tail_1].SetJointStrength(0.1f);
+
+        // Add a reward for balance.
+        // Calculate dot product between up vector for 'but' and the world's up vector.
+        // This will be 1 when 'but' is exactly upright, and less than 1 as 'but' tilts.
+        float balance = Vector3.Dot(but.up, Vector3.up);
+        // You may want to add a scaling factor here to adjust the reward.
+        AddReward(balance * 0.2f);
+
         float distanceToTarget = Vector3.Distance(neck.transform.position, Target.position);
         // print("distanceToTarget "+distanceToTarget);
         // Reached target
@@ -288,11 +302,12 @@ public class DinoBehaviourScript : Agent
 
         // standing upright bonus
         var uprightBonus = but.up.y;
-        AddReward(uprightBonus * 0.2f);
+        AddReward(uprightBonus * 0.05f);
 
         // penalize too much movement
-        float jointMovementCost = continuousActionsOut[0] * continuousActionsOut[1] * -0.01f;
-        AddReward(jointMovementCost);
+        // var continuousActionsOut = actionsOut.ContinuousActions;
+        // float jointMovementCost = continuousActionsOut[0] * continuousActionsOut[1] * -0.01f;
+        // AddReward(jointMovementCost);
 
         lastDistanceToTarget = currentDistanceToTarget;
 
