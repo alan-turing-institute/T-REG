@@ -29,7 +29,7 @@ public class DinoBehaviourScript : Agent
     [Range(0.1f, 10)]
     [SerializeField]
     //The walking speed to try and achieve
-    private float m_TargetWalkingSpeed = 10;
+    private float m_TargetWalkingSpeed = 2;
 
     public float MTargetWalkingSpeed // property
     {
@@ -37,7 +37,7 @@ public class DinoBehaviourScript : Agent
         set { m_TargetWalkingSpeed = Mathf.Clamp(value, .1f, m_maxWalkingSpeed); }
     }
 
-    const float m_maxWalkingSpeed = 10; //The max walking speed
+    const float m_maxWalkingSpeed = 4; //The max walking speed
 
     //Should the agent sample a new goal velocity each episode?
     //If true, walkSpeed will be randomly set between zero and m_maxWalkingSpeed in OnEpisodeBegin()
@@ -118,7 +118,7 @@ public class DinoBehaviourScript : Agent
 
          // Randomized starting position on episode reset. Best to keep Y tight. 
         float randomX = UnityEngine.Random.Range(20f, 25f); 
-        float randomY = UnityEngine.Random.Range(20f, 22f); 
+        float randomY = UnityEngine.Random.Range(18f, 20f); 
         float randomZ = UnityEngine.Random.Range(-15f, -10f); 
         this.transform.localPosition = new Vector3(randomX, randomY, randomZ); 
 
@@ -302,9 +302,9 @@ public class DinoBehaviourScript : Agent
         // only reward the agent if it got closer to the target
         if (distanceDifference > 0)
         {
-            AddReward(distanceDifference * 1f);  // positive reward when getting closer
+            AddReward(distanceDifference * 0.3f);  // positive reward when getting closer
         } else {
-            AddReward(distanceDifference * 0.1f);  // negative reward when getting further away
+            AddReward(distanceDifference * 0.05f);  // negative reward when getting further away
         }
 
         // standing upright bonus
