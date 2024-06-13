@@ -59,6 +59,9 @@ public class WalkerAgent : Agent
     JointDriveController m_JdController;
     EnvironmentParameters m_ResetParams;
 
+    // to keep track of number of steps agent has taken in an episode
+    private int episode_steps = 0;
+
     public override void Initialize()
     {
         m_OrientationCube = GetComponentInChildren<OrientationCubeController>();
@@ -93,6 +96,7 @@ public class WalkerAgent : Agent
     /// </summary>
     public override void OnEpisodeBegin()
     {
+        this.episode_steps = 0;
         //Reset all of the body parts
         foreach (var bodyPart in m_JdController.bodyPartsDict.Values)
         {
@@ -166,9 +170,47 @@ public class WalkerAgent : Agent
         }
     }
 
+    /// <summary>
+    /// This method is repeatedly called when the TRex simulator is run in Unity
+    /// without any RL. In essence, the method is called when the TRex is not being
+    /// controlled by RL or a pre-trained model
+    /// </summary>
+    public override void Heuristic(in ActionBuffers actionsOut)
+    {
+        actionsOut.Clear();
+        var continuousActionsOut = actionsOut.ContinuousActions;
+
+        // based on commented code below, nothing is being done
+        // continuousActionsOut[0] = 50f;
+        // continuousActionsOut[1] = 50f;
+
+        if (this.episode_steps == 0) {
+
+        }
+        else if (this.episode_steps % 1 == 0) {
+            print("take an action // step ------> " + this.episode_steps);
+            continuousActionsOut[0] = -100f;
+            // continuousActionsOut[1] = -100f;
+            // continuousActionsOut[2] = -100f;
+            // continuousActionsOut[3] = -100f;
+            // continuousActionsOut[4] = -100f;
+            // continuousActionsOut[5] = 50f;
+            // continuousActionsOut[6] = 50f;
+            // continuousActionsOut[7] = 50f;
+            // continuousActionsOut[8] = 50f;
+            // continuousActionsOut[9] = 50f;
+            // continuousActionsOut[10] = 50f;
+            // continuousActionsOut[11] = 50f;
+            // continuousActionsOut[12] = 50f;
+            // continuousActionsOut[13] = 50f;
+
+        }
+    }
+
     public override void OnActionReceived(ActionBuffers actionBuffers)
 
     {
+        this.episode_steps += 1;
         var bpDict = m_JdController.bodyPartsDict;
         var i = -1;
 
