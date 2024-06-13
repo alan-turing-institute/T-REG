@@ -237,7 +237,7 @@ public class DinoBehaviourScript : Agent
         bpDict[thighR].SetJointTargetRotation(0.0f, 0.0f, thighR_target_rotation);
         bpDict[thighR].SetJointStrength(50.1f);
 
-        bpDict[tail1].SetJointTargetRotation(0.0f, 0.0f, -thighL_target_rotation);
+        bpDict[tail1].SetJointTargetRotation(0.0f, 0.0f, tail1_target_rotation);
         bpDict[tail1].SetJointStrength(50.1f);
 
         // update episode tracker
@@ -301,9 +301,9 @@ public class DinoBehaviourScript : Agent
         }
         else if (this.episode_steps % 1 == 0) {
             print("take an action // step ------> " + this.episode_steps);
-            continuousActionsOut[0] = 1f;
-            continuousActionsOut[1] = 1f;
-            continuousActionsOut[2] = 1f;
+            continuousActionsOut[0] = 1.0f; // left thigh rotation (along z-axis)
+            continuousActionsOut[1] = 1.0f; // right thight rotation (along z-axis)
+            continuousActionsOut[2] = 1.0f; // tail rotation (along z-axis)
         }
     }
 
