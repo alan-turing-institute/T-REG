@@ -17,36 +17,27 @@ public class DinoBehaviourScript : Agent
 
     [Header("Body Parts")]
     public Transform mainBody;
-
     public Transform footL;
     public Transform footR;
-
     public Transform but;
-
     public Transform hipL;
     public Transform thighL;
     public Transform shinL; // this is the left calf consider renmaing to leftCalf
     public Transform hipR;
     public Transform thighR;
     public Transform shinR; // this is the right calf consider renmaing to rightCalf
-
     public Transform tail1;
     public Transform tail2;
     public Transform tail3;
-
     public Transform spineLower;
     // public Transform upperSpine;
     public Transform neck;
-
     public Transform jawTop;
     public Transform jawBottom;
-
     public Transform shoulderL;
     public Transform shoulderR;
-
     public Transform armL;
     public Transform armR;
-
     public Transform forArmL;
     public Transform forArmR;
 
@@ -55,8 +46,9 @@ public class DinoBehaviourScript : Agent
     [Range(0.1f, 10)]
     [SerializeField]
     //The walking speed to try and achieve
-    private float m_TargetWalkingSpeed = 10;
+    private float m_TargetWalkingSpeed = 10f;
 
+   // private float m_arenaSize = 100f;
 
     public float MTargetWalkingSpeed // property
     {
@@ -164,9 +156,9 @@ public class DinoBehaviourScript : Agent
     public override void OnEpisodeBegin()
     {
         // print the total episode reward every 50 episodes
-        if (this.episode_counter % 10 == 0) {
-            print("episode " + this.episode_counter + " reward: " + episode_reward_tracker);
-        }
+       // if (this.episode_counter % 10 == 0) {
+        //    print("episode " + this.episode_counter + " reward: " + episode_reward_tracker);
+       // }
 
         // increment episode counter
         this.episode_counter += 1;
@@ -259,8 +251,8 @@ public class DinoBehaviourScript : Agent
             EndEpisode();
         }
         else if (distanceToTarget > 150f) {
-            // agent is too far from target, neegatively reward it and exit episode.
-            SetReward(-1f);
+            // agent is too far from target, negatively reward it and exit episode.
+            SetReward(-0.5f);
             this.episode_reward_tracker += -1.0f;
             EndEpisode();
         }
@@ -271,19 +263,19 @@ public class DinoBehaviourScript : Agent
             // Calculate dot product between up vector for 'but' and the world's up vector.
             // This will be 1 when 'but' is exactly upright, and less than 1 as 'but' tilts.
             float balance = Vector3.Dot(but.up, Vector3.up);
-            AddReward(balance * 0.1f); // scale the reward
-            this.episode_reward_tracker += balance * 0.1f;
+            AddReward(balance * 0.005f); // scale the reward
+            this.episode_reward_tracker += balance * 0.005f;
 
             // distance reward
             float distanceDifference = lastDistanceToTarget - distanceToTarget;
             if (distanceDifference > 0)
             {
-                AddReward(distanceDifference * 0.1f);  // positive reward when getting closer
-                this.episode_reward_tracker += distanceDifference * 0.1f;
+                AddReward(distanceDifference * 0.05f);  // positive reward when getting closer
+                this.episode_reward_tracker += distanceDifference * 0.05f;
             }
             else {
-                AddReward(distanceDifference * 0.01f);  // negative reward when getting further away
-                this.episode_reward_tracker += distanceDifference * 0.1f;
+                AddReward(distanceDifference * 0.05f);  // negative reward when getting further away
+                this.episode_reward_tracker += distanceDifference * 0.05f;
             }
 
             lastDistanceToTarget = distanceToTarget;
@@ -300,17 +292,42 @@ public class DinoBehaviourScript : Agent
         // clear  buffer
         actionsOut.Clear();
 
-        var continuousActionsOut = actionsOut.ContinuousActions;
-        if (this.episode_steps == 0) {
-
+        // suspend t-rex in mid-air (or not)
+        Rigidbody mainRigidBody = mainBody.gameObject.GetComponent<Rigidbody>();
+        if (Input.GetKey(KeyCode.T)) {
+            mainRigidBody.isKinematic = !mainRigidBody.isKinematic;           
         }
-        else if (this.episode_steps % 1 == 0) {
-            print("take an action // step ------> " + this.episode_steps);
-            continuousActionsOut[0] = 0.0f; // left thigh rotation (along z-axis)
-            continuousActionsOut[1] = 0.0f; // right thight rotation (along z-axis)
-            continuousActionsOut[2] = 0.0f; // tail rotation (along z-axis)
-            continuousActionsOut[3] = 0.0f; // lower spine rotation (along x-axis)
-            continuousActionsOut[4] = 0.0f; // lower spine rotation (along z-axis)
+
+        var continuousActionsOut = actionsOut.ContinuousActions;
+        // left thigh rotation (along z-axis)
+        if (Input.GetKey(KeyCode.Q)) {
+            continuousActionsOut[0] = 1f; 
+        } else if  (Input.GetKey(KeyCode.W)) {
+            continuousActionsOut[0] = -1f; 
+        }
+        // right thight rotation (along z-axis)
+        if (Input.GetKey(KeyCode.O)) {
+            continuousActionsOut[1] = 1f; 
+        } else if  (Input.GetKey(KeyCode.P)) {
+            continuousActionsOut[1] = -1f;
+        }
+        // tail rotation (along z-axis)
+        if (Input.GetKey(KeyCode.A)) {
+            continuousActionsOut[2] = 1f;
+        } else if  (Input.GetKey(KeyCode.S)) {
+            continuousActionsOut[2] = -1f;
+        }
+        // lower spine rotation (along x-axis)
+        if (Input.GetKey(KeyCode.D)) {
+            continuousActionsOut[3] = 1f;
+        }  else if  (Input.GetKey(KeyCode.F)) {
+            continuousActionsOut[3] = -1f;
+        }
+        // lower spine rotation (along z-axis)
+        if (Input.GetKey(KeyCode.G)) {
+            continuousActionsOut[4] = 1f;
+        }  else if  (Input.GetKey(KeyCode.H)) {
+            continuousActionsOut[4] = -1f;
         }
     }
 
