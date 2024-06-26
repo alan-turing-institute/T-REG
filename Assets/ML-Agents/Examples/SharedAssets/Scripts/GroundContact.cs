@@ -24,10 +24,12 @@ namespace Unity.MLAgentsExamples
         /// </summary>
         void OnCollisionEnter(Collision col)
         {
-            // print("OnCollisionEnter");
-            // print(gameObject.name);
             if (col.transform.CompareTag(k_Ground))
             {
+                // print("GroundContact.OnCollisionEnter");
+                // print(gameObject.name);
+                // print(col.transform);
+
                 touchingGround = true;
                 if (penalizeGroundContact)
                 {
