@@ -46,17 +46,17 @@ public class DinoBehaviourScript : Agent
     [Range(0.1f, 10)]
     [SerializeField]
     //The walking speed to try and achieve
-    private float m_TargetWalkingSpeed = 10f;
+    private float targetWalkingSpeed = 10f;
 
    // private float m_arenaSize = 100f;
 
-    public float MTargetWalkingSpeed // property
+    public float TargetWalkingSpeed // property
     {
-        get { return m_TargetWalkingSpeed; }
-        set { m_TargetWalkingSpeed = Mathf.Clamp(value, .1f, m_maxWalkingSpeed); }
+        get { return targetWalkingSpeed; }
+        set { targetWalkingSpeed = Mathf.Clamp(value, .1f, maxWalkingSpeed); }
     }
 
-    const float m_maxWalkingSpeed = 10; //The max walking speed
+    const float maxWalkingSpeed = 10; //The max walking speed
 
     //Should the agent sample a new goal velocity each episode?
     //If true, walkSpeed will be randomly set between zero and m_maxWalkingSpeed in OnEpisodeBegin()
@@ -64,75 +64,75 @@ public class DinoBehaviourScript : Agent
     public bool randomizeWalkSpeedEachEpisode;
 
     //The direction an agent will walk during training.
-    private Vector3 m_WorldDirToWalk = Vector3.right;
+    private Vector3 worldDirToWalk = Vector3.right;
 
     [Header("Target To Walk Towards")] public Transform target; //Target the agent will walk towards during training.
 
     //This will be used as a stabilized model space reference point for observations
     //Because ragdolls can move erratically during training, using a stabilized reference transform improves learning
-    OrientationCubeController m_OrientationCube;
+    OrientationCubeController orientationCube;
 
     //The indicator graphic gameobject that points towards the target
-    DirectionIndicator m_DirectionIndicator;
-    JointDriveController m_JdController;
-    EnvironmentParameters m_ResetParams;
+    DirectionIndicator directionIndicator;
+    JointDriveController jdController;
+    EnvironmentParameters resetParams;
 
     // position and distance to target
     private Vector3 lastPosition;
     private float lastDistanceToTarget;
 
     // to keep track of number of steps agent has taken in an episode
-    private int episode_steps = 0;
-    private double episode_reward_tracker = 0;
-    private int episode_counter = 0;
+    private int episodeSteps = 0;
+    private double episodeRewardTracker = 0;
+    private int episodeCounter = 0;
 
-    private List<Rigidbody> all_rigid_bodies = new List<Rigidbody>();
+    private List<Rigidbody> allRigidBodies = new List<Rigidbody>();
 
     public override void Initialize()
     {
-        FindAllRigidBodies find_rigid_bodies = GetComponent<FindAllRigidBodies>();
-        all_rigid_bodies = find_rigid_bodies.CountBodies();
-        print("DinoAgent.Initialize: list of rigid bodies: " + all_rigid_bodies.Count);
+        FindAllRigidBodies findRigidBodies = GetComponent<FindAllRigidBodies>();
+        allRigidBodies = findRigidBodies.CountBodies();
+        print("DinoAgent.Initialize: list of rigid bodies: " + allRigidBodies.Count);
 
-        m_OrientationCube = GetComponentInChildren<OrientationCubeController>();
-        m_DirectionIndicator = GetComponentInChildren<DirectionIndicator>();
+        orientationCube = GetComponentInChildren<OrientationCubeController>();
+        directionIndicator = GetComponentInChildren<DirectionIndicator>();
 
         //Setup each body part
-        m_JdController = GetComponent<JointDriveController>();
-        m_JdController.SetupBodyPart(mainBody);
+        jdController = GetComponent<JointDriveController>();
+        jdController.SetupBodyPart(mainBody);
 
-        m_JdController.SetupBodyPart(footL);
-        m_JdController.SetupBodyPart(footR);
+        jdController.SetupBodyPart(footL);
+        jdController.SetupBodyPart(footR);
 
-        m_JdController.SetupBodyPart(but);
+        jdController.SetupBodyPart(but);
 
-        m_JdController.SetupBodyPart(hipL);
-        m_JdController.SetupBodyPart(thighL);
-        m_JdController.SetupBodyPart(shinL);
-        m_JdController.SetupBodyPart(hipR);
-        m_JdController.SetupBodyPart(thighR);
-        m_JdController.SetupBodyPart(shinR);
+        jdController.SetupBodyPart(hipL);
+        jdController.SetupBodyPart(thighL);
+        jdController.SetupBodyPart(shinL);
+        jdController.SetupBodyPart(hipR);
+        jdController.SetupBodyPart(thighR);
+        jdController.SetupBodyPart(shinR);
 
-        m_JdController.SetupBodyPart(tail1);
-        m_JdController.SetupBodyPart(tail2);
-        m_JdController.SetupBodyPart(tail3);
+        jdController.SetupBodyPart(tail1);
+        jdController.SetupBodyPart(tail2);
+        jdController.SetupBodyPart(tail3);
 
-        m_JdController.SetupBodyPart(spineLower);
-        m_JdController.SetupBodyPart(neck);
+        jdController.SetupBodyPart(spineLower);
+        jdController.SetupBodyPart(neck);
 
-        m_JdController.SetupBodyPart(jawTop);
-        m_JdController.SetupBodyPart(jawBottom);
+        jdController.SetupBodyPart(jawTop);
+        jdController.SetupBodyPart(jawBottom);
 
-        m_JdController.SetupBodyPart(shoulderL);
-        m_JdController.SetupBodyPart(shoulderR);
+        jdController.SetupBodyPart(shoulderL);
+        jdController.SetupBodyPart(shoulderR);
 
-        m_JdController.SetupBodyPart(armL);
-        m_JdController.SetupBodyPart(armR);
+        jdController.SetupBodyPart(armL);
+        jdController.SetupBodyPart(armR);
 
-        m_JdController.SetupBodyPart(forArmL);
-        m_JdController.SetupBodyPart(forArmR);
+        jdController.SetupBodyPart(forArmL);
+        jdController.SetupBodyPart(forArmR);
 
-        m_ResetParams = Academy.Instance.EnvironmentParameters;
+        resetParams = Academy.Instance.EnvironmentParameters;
 
         neckGameObject = GameObject.Find("Neck");
 
@@ -145,11 +145,11 @@ public class DinoBehaviourScript : Agent
     //Update OrientationCube and DirectionIndicator
     void UpdateOrientationObjects()
     {
-        m_WorldDirToWalk = target.position - but.position;
-        m_OrientationCube.UpdateOrientation(but, target);
-        if (m_DirectionIndicator)
+        worldDirToWalk = target.position - but.position;
+        orientationCube.UpdateOrientation(but, target);
+        if (directionIndicator)
         {
-            m_DirectionIndicator.MatchOrientation(m_OrientationCube.transform);
+            directionIndicator.MatchOrientation(orientationCube.transform);
         }
     }
 
@@ -161,29 +161,29 @@ public class DinoBehaviourScript : Agent
        // }
 
         // increment episode counter
-        this.episode_counter += 1;
+        this.episodeCounter += 1;
 
         // reset other trackers
-        this.episode_steps = 0;
-        this.episode_reward_tracker = 0;
+        this.episodeSteps = 0;
+        this.episodeRewardTracker = 0;
 
         // If the Agent fell, zero its momentum
         // print("DinoAgent.OnEpisodeBegin. My caller: " + (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().Name);
 
-        foreach (var rb in all_rigid_bodies) {
+        foreach (var rb in allRigidBodies) {
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
 
         //Reset all of the body parts
-        foreach (var bodyPart in m_JdController.bodyPartsDict.Values)
+        foreach (var bodyPart in jdController.bodyPartsDict.Values)
         {
             bodyPart.Reset(bodyPart);
         }
         mainBody.rotation = Quaternion.Euler(-90, 0, 0);
         mainBody.position = startingPosition;
 
-        // Radomly start the agent with small variation on the y-axis. For fixed position, use the comment line below
+        // Randomly start the agent with small variation on the y-axis. For fixed position, use the comment line below
         //this.transform.localPosition = new Vector3(22f, Random.Range(20f, 25f), -12f);
         // this.transform.localPosition = new Vector3(22, 25, -12); // fixed position
         // this.transform.localPosition = new Vector3(22, 22f, -12); // fixed position
@@ -216,7 +216,7 @@ public class DinoBehaviourScript : Agent
         // take an action.
         // involves rotating the legs (via the thigs) and the tail
         // note, the rotation is clamped between -90 and 90 degrees
-        var bpDict = m_JdController.bodyPartsDict;
+        var bpDict = jdController.bodyPartsDict;
         var continuousActions = actionBuffers.ContinuousActions;
 
         float thighL_target_rotation = Mathf.Clamp(continuousActions[0], -90, 90);
@@ -238,7 +238,7 @@ public class DinoBehaviourScript : Agent
         bpDict[spineLower].SetJointStrength(50.1f);
 
         // update episode tracker
-        this.episode_steps += 1;
+        this.episodeSteps += 1;
 
         // check for terminal state and corresponding reward
         float distanceToTarget = Vector3.Distance(neckGameObject.transform.position, target.position);
@@ -247,13 +247,13 @@ public class DinoBehaviourScript : Agent
         if (distanceToTarget < 1f) {
             // agent has reached target, positvely reward agent it and exit episode.
             SetReward(1.0f);
-            this.episode_reward_tracker += 1.0f;
+            this.episodeRewardTracker += 1.0f;
             EndEpisode();
         }
         else if (distanceToTarget > 150f) {
             // agent is too far from target, negatively reward it and exit episode.
             SetReward(-0.5f);
-            this.episode_reward_tracker += -1.0f;
+            this.episodeRewardTracker += -0.5f;
             EndEpisode();
         }
         else {
@@ -264,18 +264,18 @@ public class DinoBehaviourScript : Agent
             // This will be 1 when 'but' is exactly upright, and less than 1 as 'but' tilts.
             float balance = Vector3.Dot(but.up, Vector3.up);
             AddReward(balance * 0.005f); // scale the reward
-            this.episode_reward_tracker += balance * 0.005f;
+            this.episodeRewardTracker += balance * 0.005f;
 
             // distance reward
             float distanceDifference = lastDistanceToTarget - distanceToTarget;
             if (distanceDifference > 0)
             {
                 AddReward(distanceDifference * 0.05f);  // positive reward when getting closer
-                this.episode_reward_tracker += distanceDifference * 0.05f;
+                this.episodeRewardTracker += distanceDifference * 0.05f;
             }
             else {
                 AddReward(distanceDifference * 0.05f);  // negative reward when getting further away
-                this.episode_reward_tracker += distanceDifference * 0.05f;
+                this.episodeRewardTracker += distanceDifference * 0.05f;
             }
 
             lastDistanceToTarget = distanceToTarget;
@@ -338,7 +338,7 @@ public class DinoBehaviourScript : Agent
 
     public void SetTorsoMass()
     {
-        m_JdController.bodyPartsDict[but].rb.mass = m_ResetParams.GetWithDefault("chest_mass", 8);
+        jdController.bodyPartsDict[but].rb.mass = resetParams.GetWithDefault("chest_mass", 8);
         // print("Chest mass is " + m_JdController.bodyPartsDict[but].rb.mass);
     }
 
@@ -352,7 +352,7 @@ public class DinoBehaviourScript : Agent
 
         //ALL RBS
         int numOfRb = 0;
-        foreach (var item in m_JdController.bodyPartsList)
+        foreach (var item in jdController.bodyPartsList)
         {
             numOfRb++;
             velSum += item.rb.velocity;
@@ -374,16 +374,16 @@ public class DinoBehaviourScript : Agent
 
         //Get velocities in the context of our orientation cube's space
         //Note: You can get these velocities in world space as well but it may not train as well.
-        sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(bp.rb.velocity));
-        sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(bp.rb.angularVelocity));
+        sensor.AddObservation(orientationCube.transform.InverseTransformDirection(bp.rb.velocity));
+        sensor.AddObservation(orientationCube.transform.InverseTransformDirection(bp.rb.angularVelocity));
 
         //Get position relative to `but` in the context of our orientation cube's space
-        sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(bp.rb.position - but.position));
+        sensor.AddObservation(orientationCube.transform.InverseTransformDirection(bp.rb.position - but.position));
 
         if (bp.rb.transform != but && bp.rb.transform != thighL && bp.rb.transform != thighR)
         {
             sensor.AddObservation(bp.rb.transform.localRotation);
-            sensor.AddObservation(bp.currentStrength / m_JdController.maxJointForceLimit);
+            sensor.AddObservation(bp.currentStrength / jdController.maxJointForceLimit);
         }
     }
 
@@ -394,28 +394,28 @@ public class DinoBehaviourScript : Agent
     /// </summary>
     public override void CollectObservations(VectorSensor sensor)
     {
-        var cubeForward = m_OrientationCube.transform.forward;
+        var cubeForward = orientationCube.transform.forward;
 
         //velocity we want to match
-        var velGoal = cubeForward * MTargetWalkingSpeed;
+        var velGoal = cubeForward * TargetWalkingSpeed;
         //Dino's avg vel
         var avgVel = GetAvgVelocity();
 
         //current Dino velocity. normalized
         sensor.AddObservation(Vector3.Distance(velGoal, avgVel));
         //avg body vel relative to cube
-        sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(avgVel));
+        sensor.AddObservation(orientationCube.transform.InverseTransformDirection(avgVel));
         //vel goal relative to cube
-        sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(velGoal));
+        sensor.AddObservation(orientationCube.transform.InverseTransformDirection(velGoal));
 
         //rotation deltas
         sensor.AddObservation(Quaternion.FromToRotation(but.forward, cubeForward));
         sensor.AddObservation(Quaternion.FromToRotation(but.forward, cubeForward));
 
         //Position of target position relative to cube
-        sensor.AddObservation(m_OrientationCube.transform.InverseTransformPoint(target.transform.position));
+        sensor.AddObservation(orientationCube.transform.InverseTransformPoint(target.transform.position));
 
-        foreach (var bodyPart in m_JdController.bodyPartsList)
+        foreach (var bodyPart in jdController.bodyPartsList)
         {
             CollectObservationBodyPart(bodyPart, sensor);
         }
