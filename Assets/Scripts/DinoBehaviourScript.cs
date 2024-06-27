@@ -15,6 +15,8 @@ public class DinoBehaviourScript : Agent
 
     private Vector3 startingPosition; 
 
+    public Vector3 targetStartingPosition;
+
     [Header("Body Parts")]
     public Transform mainBody;
     public Transform footL;
@@ -68,6 +70,8 @@ public class DinoBehaviourScript : Agent
 
     [Header("Target To Walk Towards")] public Transform target; //Target the agent will walk towards during training.
 
+    TargetController targetController;
+
     //This will be used as a stabilized model space reference point for observations
     //Because ragdolls can move erratically during training, using a stabilized reference transform improves learning
     OrientationCubeController orientationCube;
@@ -81,11 +85,6 @@ public class DinoBehaviourScript : Agent
     private Vector3 lastPosition;
     private float lastDistanceToTarget;
 
-    // to keep track of number of steps agent has taken in an episode
-    private int episodeSteps = 0;
-    private double episodeRewardTracker = 0;
-    private int episodeCounter = 0;
-
     private List<Rigidbody> allRigidBodies = new List<Rigidbody>();
 
     public override void Initialize()
@@ -96,6 +95,8 @@ public class DinoBehaviourScript : Agent
 
         orientationCube = GetComponentInChildren<OrientationCubeController>();
         directionIndicator = GetComponentInChildren<DirectionIndicator>();
+
+        targetController = target.gameObject.GetComponent<TargetController>();
 
         //Setup each body part
         jdController = GetComponent<JointDriveController>();
@@ -120,23 +121,25 @@ public class DinoBehaviourScript : Agent
         jdController.SetupBodyPart(spineLower);
         jdController.SetupBodyPart(neck);
 
-        jdController.SetupBodyPart(jawTop);
-        jdController.SetupBodyPart(jawBottom);
+      //  jdController.SetupBodyPart(jawTop);
+      //  jdController.SetupBodyPart(jawBottom);
 
         jdController.SetupBodyPart(shoulderL);
         jdController.SetupBodyPart(shoulderR);
 
-        jdController.SetupBodyPart(armL);
-        jdController.SetupBodyPart(armR);
+      //  jdController.SetupBodyPart(armL);
+      //  jdController.SetupBodyPart(armR);
 
-        jdController.SetupBodyPart(forArmL);
-        jdController.SetupBodyPart(forArmR);
+      //  jdController.SetupBodyPart(forArmL);
+      //  jdController.SetupBodyPart(forArmR);
 
         resetParams = Academy.Instance.EnvironmentParameters;
 
         neckGameObject = GameObject.Find("Neck");
 
         startingPosition = mainBody.position;
+
+        targetStartingPosition = new Vector3(0, 8f, 40f);
 
         SetResetParameters();
     }
@@ -155,20 +158,8 @@ public class DinoBehaviourScript : Agent
 
     public override void OnEpisodeBegin()
     {
-        // print the total episode reward every 50 episodes
-       // if (this.episode_counter % 10 == 0) {
-        //    print("episode " + this.episode_counter + " reward: " + episode_reward_tracker);
-       // }
-
-        // increment episode counter
-        this.episodeCounter += 1;
-
-        // reset other trackers
-        this.episodeSteps = 0;
-        this.episodeRewardTracker = 0;
 
         // If the Agent fell, zero its momentum
-        // print("DinoAgent.OnEpisodeBegin. My caller: " + (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().Name);
 
         foreach (var rb in allRigidBodies) {
             rb.velocity = Vector3.zero;
@@ -197,6 +188,7 @@ public class DinoBehaviourScript : Agent
         //     this.transform.localPosition = new Vector3( 0, 0.5f, 0);
         // }
 
+        target.transform.localPosition = targetStartingPosition;
         // Move the target to a new spot
         // target.transform.localPosition = new Vector3(Random.value * 8 - 4, 5f, Random.value * 8 - 4);
         // or keep target in a fixed position (simpler problem, but agent cannot generalize to different positions)
@@ -224,6 +216,8 @@ public class DinoBehaviourScript : Agent
         float tail1_target_rotation = Mathf.Clamp(continuousActions[2], -90, 90);
         float spineLower_x_target_rotation = Mathf.Clamp(continuousActions[3], -30, 30);
         float spineLower_z_target_rotation = Mathf.Clamp(continuousActions[4], -30, 30);
+        float calfL_target_rotation = Mathf.Clamp(continuousActions[5],-60, 60 );
+        float calfR_target_rotation = Mathf.Clamp(continuousActions[6],-60, 60 );
 
         bpDict[thighL].SetJointTargetRotation(0.0f, 0.0f, thighL_target_rotation);
         bpDict[thighL].SetJointStrength(50.1f);
@@ -231,29 +225,31 @@ public class DinoBehaviourScript : Agent
         bpDict[thighR].SetJointTargetRotation(0.0f, 0.0f, thighR_target_rotation);
         bpDict[thighR].SetJointStrength(50.1f);
 
+        bpDict[shinL].SetJointTargetRotation(0.0f, 0.0f, calfL_target_rotation);
+        bpDict[shinL].SetJointStrength(50.1f);
+
+        bpDict[shinR].SetJointTargetRotation(0.0f, 0.0f, calfR_target_rotation);
+        bpDict[shinR].SetJointStrength(50.1f);
+
         bpDict[tail1].SetJointTargetRotation(0.0f, 0.0f, tail1_target_rotation);
         bpDict[tail1].SetJointStrength(50.1f);
 
         bpDict[spineLower].SetJointTargetRotation(spineLower_x_target_rotation, 0.0f, spineLower_z_target_rotation);
         bpDict[spineLower].SetJointStrength(50.1f);
 
-        // update episode tracker
-        this.episodeSteps += 1;
-
         // check for terminal state and corresponding reward
         float distanceToTarget = Vector3.Distance(neckGameObject.transform.position, target.position);
 
         // Reached target
-        if (distanceToTarget < 1f) {
+        if (distanceToTarget < 2f) {
             // agent has reached target, positvely reward agent it and exit episode.
             SetReward(1.0f);
-            this.episodeRewardTracker += 1.0f;
-            EndEpisode();
+            targetController.MoveTargetToRandomPosition();
+           // EndEpisode();
         }
         else if (distanceToTarget > 150f) {
             // agent is too far from target, negatively reward it and exit episode.
             SetReward(-0.5f);
-            this.episodeRewardTracker += -0.5f;
             EndEpisode();
         }
         else {
@@ -264,18 +260,15 @@ public class DinoBehaviourScript : Agent
             // This will be 1 when 'but' is exactly upright, and less than 1 as 'but' tilts.
             float balance = Vector3.Dot(but.up, Vector3.up);
             AddReward(balance * 0.005f); // scale the reward
-            this.episodeRewardTracker += balance * 0.005f;
 
             // distance reward
             float distanceDifference = lastDistanceToTarget - distanceToTarget;
             if (distanceDifference > 0)
             {
                 AddReward(distanceDifference * 0.05f);  // positive reward when getting closer
-                this.episodeRewardTracker += distanceDifference * 0.05f;
             }
             else {
                 AddReward(distanceDifference * 0.05f);  // negative reward when getting further away
-                this.episodeRewardTracker += distanceDifference * 0.05f;
             }
 
             lastDistanceToTarget = distanceToTarget;
@@ -328,6 +321,20 @@ public class DinoBehaviourScript : Agent
             continuousActionsOut[4] = 1f;
         }  else if  (Input.GetKey(KeyCode.H)) {
             continuousActionsOut[4] = -1f;
+        }
+
+        // left calf rotation (along z-axis)
+        if (Input.GetKey(KeyCode.Z)) {
+            continuousActionsOut[5] = 1f;
+        }  else if  (Input.GetKey(KeyCode.X)) {
+            continuousActionsOut[5] = -1f;
+        }
+
+        // right calf rotation (along z-axis)
+        if (Input.GetKey(KeyCode.C)) {
+            continuousActionsOut[6] = 1f;
+        }  else if  (Input.GetKey(KeyCode.V)) {
+            continuousActionsOut[6] = -1f;
         }
     }
 
