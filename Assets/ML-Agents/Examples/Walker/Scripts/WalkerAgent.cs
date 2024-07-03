@@ -164,10 +164,10 @@ public class WalkerAgent : Agent
         //Position of target position relative to cube
         sensor.AddObservation(m_OrientationCube.transform.InverseTransformPoint(target.transform.position));
 
-        foreach (var bodyPart in m_JdController.bodyPartsList)
-        {
+        foreach (var bodyPart in m_JdController.bodyPartsList) {
             CollectObservationBodyPart(bodyPart, sensor);
         }
+        print("Walker Observation size: " + sensor.ObservationSize());
     }
 
     /// <summary>
