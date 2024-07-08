@@ -15,6 +15,10 @@ public class DinoBehaviourScript : Agent
 
     private Vector3 startingPosition; 
 
+    private Vector3 targetStartingPosition;
+
+    private int targetPositionIndex  = 0;
+
     [Header("Body Parts")]
     public Transform mainBody;
     public Transform footL;
@@ -47,8 +51,6 @@ public class DinoBehaviourScript : Agent
     [SerializeField]
     //The walking speed to try and achieve
     private float targetWalkingSpeed = 10f;
-
-   // private float m_arenaSize = 100f;
 
     public float TargetWalkingSpeed // property
     {
@@ -89,10 +91,10 @@ public class DinoBehaviourScript : Agent
     private List<Rigidbody> allRigidBodies = new List<Rigidbody>();
 
     public override void Initialize()
-    {
+    {  
+
         FindAllRigidBodies findRigidBodies = GetComponent<FindAllRigidBodies>();
         allRigidBodies = findRigidBodies.CountBodies();
-        print("DinoAgent.Initialize: list of rigid bodies: " + allRigidBodies.Count);
 
         orientationCube = GetComponentInChildren<OrientationCubeController>();
         directionIndicator = GetComponentInChildren<DirectionIndicator>();
@@ -167,6 +169,10 @@ public class DinoBehaviourScript : Agent
         this.episodeSteps = 0;
         this.episodeRewardTracker = 0;
 
+        targetStartingPosition = new Vector3(Random.Range(-3f,3f), 10f, 30f);
+        target.transform.position = targetStartingPosition;
+        targetPositionIndex = 0;
+
         // If the Agent fell, zero its momentum
         // print("DinoAgent.OnEpisodeBegin. My caller: " + (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().Name);
 
@@ -183,26 +189,7 @@ public class DinoBehaviourScript : Agent
         mainBody.rotation = Quaternion.Euler(-90, 0, 0);
         mainBody.position = startingPosition;
 
-        // Randomly start the agent with small variation on the y-axis. For fixed position, use the comment line below
-        //this.transform.localPosition = new Vector3(22f, Random.Range(20f, 25f), -12f);
-        // this.transform.localPosition = new Vector3(22, 25, -12); // fixed position
-        // this.transform.localPosition = new Vector3(22, 22f, -12); // fixed position
         UpdateOrientationObjects();
-
-
-        // if (this.transform.localPosition.y < 0)
-        // {
-        //     // this.rBody.angularVelocity = Vector3.zero;
-        //     // this.rBody.velocity = Vector3.zero;
-        //     this.transform.localPosition = new Vector3( 0, 0.5f, 0);
-        // }
-
-        // Move the target to a new spot
-        // target.transform.localPosition = new Vector3(Random.value * 8 - 4, 5f, Random.value * 8 - 4);
-        // or keep target in a fixed position (simpler problem, but agent cannot generalize to different positions)
-        // target.transform.localPosition = new Vector3(22, 3, 40);
-        // print("DinoAgent:Setting new target position");
-        // print(target.transform.localPosition);
 
         SetResetParameters();
 
@@ -242,13 +229,13 @@ public class DinoBehaviourScript : Agent
 
         // check for terminal state and corresponding reward
         float distanceToTarget = Vector3.Distance(neckGameObject.transform.position, target.position);
-
+       // print("Distance "+distanceToTarget);
         // Reached target
-        if (distanceToTarget < 1f) {
+        if (distanceToTarget < 9f) {
             // agent has reached target, positvely reward agent it and exit episode.
             SetReward(1.0f);
             this.episodeRewardTracker += 1.0f;
-            EndEpisode();
+            MoveTargetToNextPosition();
         }
         else if (distanceToTarget > 150f) {
             // agent is too far from target, negatively reward it and exit episode.
@@ -274,7 +261,7 @@ public class DinoBehaviourScript : Agent
                 this.episodeRewardTracker += distanceDifference * 0.05f;
             }
             else {
-                AddReward(distanceDifference * 0.05f);  // negative reward when getting further away
+             //   AddReward(distanceDifference * 0.05f);  // negative reward when getting further away
                 this.episodeRewardTracker += distanceDifference * 0.05f;
             }
 
@@ -331,13 +318,33 @@ public class DinoBehaviourScript : Agent
         }
     }
 
-    public void SetResetParameters()
-    {
+    private void MoveTargetToNextPosition() {
+        targetPositionIndex += 1;
+        if (targetPositionIndex == 8) {
+            EndEpisode();
+        } else {
+            // always move back towards the centre or to the other side of it
+            if (target.transform.position.x < 0f) {
+                target.transform.position = new Vector3(
+                    target.transform.position.x + Random.Range(0f,10f),
+                    target.transform.position.y,
+                    target.transform.position.z + 20f
+                );
+            } else {
+                target.transform.position = new Vector3(
+                    target.transform.position.x - Random.Range(0f,10f),
+                    target.transform.position.y,
+                    target.transform.position.z + 20f
+                );
+            }
+        }
+    }
+
+    public void SetResetParameters() {
         SetTorsoMass();
     }
 
-    public void SetTorsoMass()
-    {
+    public void SetTorsoMass() {
         jdController.bodyPartsDict[but].rb.mass = resetParams.GetWithDefault("chest_mass", 8);
         // print("Chest mass is " + m_JdController.bodyPartsDict[but].rb.mass);
     }
@@ -346,20 +353,32 @@ public class DinoBehaviourScript : Agent
     //Returns the average velocity of all of the body parts
     //Using the velocity of the hips only has shown to result in more erratic movement from the limbs, so...
     //...using the average helps prevent this erratic movement
-    Vector3 GetAvgVelocity()
-    {
+    Vector3 GetAvgVelocity() {
         Vector3 velSum = Vector3.zero;
 
         //ALL RBS
         int numOfRb = 0;
-        foreach (var item in jdController.bodyPartsList)
-        {
+        foreach (var item in jdController.bodyPartsList) {
             numOfRb++;
             velSum += item.rb.velocity;
         }
 
         var avgVel = velSum / numOfRb;
         return avgVel;
+    }
+
+    public Vector3 GetAvgPosition() {
+        Vector3 posSum = Vector3.zero;
+
+        //ALL RBS
+        int numOfRb = 0;
+        foreach (var item in jdController.bodyPartsList) {
+            numOfRb++;
+            posSum += item.rb.position;
+        }
+
+        var avgPos = posSum / numOfRb;
+        return avgPos;
     }
 
     /// <summary>
@@ -419,5 +438,9 @@ public class DinoBehaviourScript : Agent
         {
             CollectObservationBodyPart(bodyPart, sensor);
         }
+    }
+
+    private void Update() {
+        //print("Position is "+neckGameObject.transform.position+" "+GetAvgPosition());
     }
 }
