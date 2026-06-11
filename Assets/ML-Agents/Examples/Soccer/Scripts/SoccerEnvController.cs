@@ -91,7 +91,7 @@ public class SoccerEnvController : MonoBehaviour
         var randomPosZ = Random.Range(-2.5f, 2.5f);
 
         ball.transform.position = m_BallStartingPos + new Vector3(randomPosX, 0f, randomPosZ);
-        ballRb.velocity = Vector3.zero;
+        ballRb.linearVelocity = Vector3.zero;
         ballRb.angularVelocity = Vector3.zero;
 
     }
@@ -128,7 +128,7 @@ public class SoccerEnvController : MonoBehaviour
             var newRot = Quaternion.Euler(0, rot, 0);
             item.Agent.transform.SetPositionAndRotation(newStartPos, newRot);
 
-            item.Rb.velocity = Vector3.zero;
+            item.Rb.linearVelocity = Vector3.zero;
             item.Rb.angularVelocity = Vector3.zero;
         }
 

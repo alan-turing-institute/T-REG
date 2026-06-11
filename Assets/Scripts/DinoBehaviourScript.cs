@@ -177,7 +177,7 @@ public class DinoBehaviourScript : Agent
         // print("DinoAgent.OnEpisodeBegin. My caller: " + (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().Name);
 
         foreach (var rb in allRigidBodies) {
-            rb.velocity = Vector3.zero;
+            rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
 
@@ -360,7 +360,7 @@ public class DinoBehaviourScript : Agent
         int numOfRb = 0;
         foreach (var item in jdController.bodyPartsList) {
             numOfRb++;
-            velSum += item.rb.velocity;
+            velSum += item.rb.linearVelocity;
         }
 
         var avgVel = velSum / numOfRb;
@@ -393,7 +393,7 @@ public class DinoBehaviourScript : Agent
 
         //Get velocities in the context of our orientation cube's space
         //Note: You can get these velocities in world space as well but it may not train as well.
-        sensor.AddObservation(orientationCube.transform.InverseTransformDirection(bp.rb.velocity));
+        sensor.AddObservation(orientationCube.transform.InverseTransformDirection(bp.rb.linearVelocity));
         sensor.AddObservation(orientationCube.transform.InverseTransformDirection(bp.rb.angularVelocity));
 
         //Get position relative to `but` in the context of our orientation cube's space
