@@ -1,0 +1,12 @@
+{
+    "name": "nbarlow.t-reg",
+    "rootNamespace": "",
+    "references": [
+        "Unity.ML-Agents"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "autoReferenced": true
+}
