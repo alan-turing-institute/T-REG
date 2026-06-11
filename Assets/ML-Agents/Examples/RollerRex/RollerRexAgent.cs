@@ -25,7 +25,7 @@ public class RollerRexAgent : Agent
         if (gObject.transform.position.y < 0)
         {
             this.rBody.angularVelocity = Vector3.zero;
-            this.rBody.velocity = Vector3.zero;
+            this.rBody.linearVelocity = Vector3.zero;
             gObject.transform.position = new Vector3(0, 4, 0);
         }
 
@@ -42,8 +42,8 @@ public class RollerRexAgent : Agent
         sensor.AddObservation(gObject.transform.position);
 
         // Agent velocity
-        sensor.AddObservation(rBody.velocity.x);
-        sensor.AddObservation(rBody.velocity.z);
+        sensor.AddObservation(rBody.linearVelocity.x);
+        sensor.AddObservation(rBody.linearVelocity.z);
     }
 
     public float movementSpeed = 1;

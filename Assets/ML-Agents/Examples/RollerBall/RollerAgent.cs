@@ -19,7 +19,7 @@ public class RollerAgent : Agent
         if (this.transform.localPosition.y < 0)
         {
             this.rBody.angularVelocity = Vector3.zero;
-            this.rBody.velocity = Vector3.zero;
+            this.rBody.linearVelocity = Vector3.zero;
             this.transform.localPosition = new Vector3( 0, 0.5f, 0);
         }
 
@@ -36,8 +36,8 @@ public class RollerAgent : Agent
         sensor.AddObservation(this.transform.localPosition);
 
         // Agent velocity
-        sensor.AddObservation(rBody.velocity.x);
-        sensor.AddObservation(rBody.velocity.z);
+        sensor.AddObservation(rBody.linearVelocity.x);
+        sensor.AddObservation(rBody.linearVelocity.z);
     }
 
     public float forceMultiplier = 10;

@@ -125,7 +125,7 @@ public class WalkerAgent : Agent
 
         //Get velocities in the context of our orientation cube's space
         //Note: You can get these velocities in world space as well but it may not train as well.
-        sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(bp.rb.velocity));
+        sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(bp.rb.linearVelocity));
         sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(bp.rb.angularVelocity));
 
         //Get position relative to hips in the context of our orientation cube's space
@@ -275,7 +275,7 @@ public class WalkerAgent : Agent
             throw new ArgumentException(
                 "NaN in moveTowardsTargetReward.\n" +
                 $" cubeForward: {cubeForward}\n" +
-                $" hips.velocity: {m_JdController.bodyPartsDict[hips].rb.velocity}\n" +
+                $" hips.velocity: {m_JdController.bodyPartsDict[hips].rb.linearVelocity}\n" +
                 $" maximumWalkingSpeed: {m_maxWalkingSpeed}"
             );
         }
@@ -309,7 +309,7 @@ public class WalkerAgent : Agent
         foreach (var item in m_JdController.bodyPartsList)
         {
             numOfRb++;
-            velSum += item.rb.velocity;
+            velSum += item.rb.linearVelocity;
         }
 
         var avgVel = velSum / numOfRb;

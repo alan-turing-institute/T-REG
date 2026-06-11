@@ -133,7 +133,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4943719350691982, guid: 5889392e3f05b448a8a06c5def6c2dec, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4943719350691982, guid: 5889392e3f05b448a8a06c5def6c2dec, type: 3}
       propertyPath: m_LocalPosition.x
@@ -316,13 +316,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1392866527}
-  m_LocalRotation: {x: 0, y: 0.9848078, z: -0.17364816, w: 0}
+  m_LocalRotation: {x: -0, y: 0.9848078, z: -0.17364816, w: 0}
   m_LocalPosition: {x: 0, y: 30, z: 90}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 20, y: 180, z: 0}
 --- !u!114 &1392866533
 MonoBehaviour:
@@ -333,11 +333,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1392866527}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec40c70d5160b47cd8deaab79e24892c, type: 3}
+  m_Script: {fileID: 11500000, guid: e8a33b37e96984a13822ada804a40933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1512694782}
-  smoothingTime: 0
+  agent: {fileID: 4530535358653238024}
 --- !u!1001 &1423326053
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -506,12 +505,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3ce107b4a79bc4eef83afde434932a68, type: 3}
---- !u!4 &1512694782 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3053891272915093828, guid: 84359146bf7af47e58c229d877e801d7,
-    type: 3}
-  m_PrefabInstance: {fileID: 2709362470382547191}
-  m_PrefabAsset: {fileID: 0}
 --- !u!850595691 &1566192884
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -688,7 +681,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 1000
+  MaxStep: 6000
   mainBody: {fileID: 5270535486799348012}
   footL: {fileID: 8521292683523506584}
   footR: {fileID: 5118038261809971796}
@@ -712,7 +705,7 @@ MonoBehaviour:
   armR: {fileID: 4025535101552332485}
   forArmL: {fileID: 267792128581198271}
   forArmR: {fileID: 4622982618167178891}
-  m_TargetWalkingSpeed: 0.1
+  targetWalkingSpeed: 10
   randomizeWalkSpeedEachEpisode: 0
   target: {fileID: 2709362470382547193}
 --- !u!114 &1764955770
@@ -737,14 +730,13 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 3c59519c34fc34f0bb579298c6e98b43, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 91c9a24041527484ebe7b2ccab80b1fc, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 0
-  m_BehaviorName: My Behavior
+  m_BehaviorType: 2
+  m_BehaviorName: TRexWalk
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
-  m_DeterministicInference: 0
   m_ObservableAttributeHandling: 0
 --- !u!4 &2009756751 stripped
 Transform:
@@ -769,7 +761,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2095421679
 Transform:
   m_ObjectHideFlags: 0
@@ -828,7 +820,7 @@ GameObject:
   - component: {fileID: 3611561678986959627}
   - component: {fileID: 3611561678986959624}
   m_Layer: 0
-  m_Name: top_jaw
+  m_Name: TopJaw
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -894,7 +886,7 @@ GameObject:
   - component: {fileID: 3611561678664489816}
   - component: {fileID: 9220989433463209986}
   m_Layer: 0
-  m_Name: bottom_jaw
+  m_Name: BottomJaw
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -914,7 +906,7 @@ GameObject:
   - component: {fileID: 3611561678791512013}
   - component: {fileID: 3611561678791512016}
   m_Layer: 0
-  m_Name: left_shoulder
+  m_Name: LeftShoulder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -930,7 +922,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5074478369622998997}
   m_Layer: 0
-  m_Name: Bone.005
+  m_Name: SkullBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -994,7 +986,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3697195918388851867}
   m_Layer: 0
-  m_Name: Bone.033
+  m_Name: RightUpperArm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1010,7 +1002,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3572504651524453514}
   m_Layer: 0
-  m_Name: Bone.033_end
+  m_Name: RightUpperArmEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1029,7 +1021,7 @@ GameObject:
   - component: {fileID: 3611561679727686527}
   - component: {fileID: 3611561679727686524}
   m_Layer: 0
-  m_Name: left_calf
+  m_Name: LeftCalf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1045,7 +1037,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7528369682419177329}
   m_Layer: 0
-  m_Name: Bone.032
+  m_Name: Sternum
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1064,7 +1056,7 @@ GameObject:
   - component: {fileID: 3611561678236654950}
   - component: {fileID: 3611561678236654951}
   m_Layer: 0
-  m_Name: left_forearm
+  m_Name: LeftForearm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1129,6 +1121,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 80185675529615104, guid: 84359146bf7af47e58c229d877e801d7,
         type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 80185675529615104, guid: 84359146bf7af47e58c229d877e801d7,
+        type: 3}
       propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
@@ -1136,6 +1133,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 88091728537968878, guid: 84359146bf7af47e58c229d877e801d7,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 88091728537968878, guid: 84359146bf7af47e58c229d877e801d7,
+        type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 140846861312608762, guid: 84359146bf7af47e58c229d877e801d7,
         type: 3}
@@ -1302,6 +1309,56 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlatformDynamicTarget
       objectReference: {fileID: 0}
+    - target: {fileID: 6718429279504673720, guid: 84359146bf7af47e58c229d877e801d7,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 401
+      objectReference: {fileID: 0}
+    - target: {fileID: 6718429279504673720, guid: 84359146bf7af47e58c229d877e801d7,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 6718452143681137950, guid: 84359146bf7af47e58c229d877e801d7,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 350
+      objectReference: {fileID: 0}
+    - target: {fileID: 6718526948895052366, guid: 84359146bf7af47e58c229d877e801d7,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 6718526948895052366, guid: 84359146bf7af47e58c229d877e801d7,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6718526948895052366, guid: 84359146bf7af47e58c229d877e801d7,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6718526948895052366, guid: 84359146bf7af47e58c229d877e801d7,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 6718613034455636038, guid: 84359146bf7af47e58c229d877e801d7,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 401
+      objectReference: {fileID: 0}
+    - target: {fileID: 6718613034455636038, guid: 84359146bf7af47e58c229d877e801d7,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: 6718613034455636038, guid: 84359146bf7af47e58c229d877e801d7,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 150
+      objectReference: {fileID: 0}
     - target: {fileID: 6718791046026642300, guid: 84359146bf7af47e58c229d877e801d7,
         type: 3}
       propertyPath: m_RootOrder
@@ -1310,7 +1367,7 @@ PrefabInstance:
     - target: {fileID: 6718791046026642300, guid: 84359146bf7af47e58c229d877e801d7,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 14.2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6718791046026642300, guid: 84359146bf7af47e58c229d877e801d7,
         type: 3}
@@ -1472,7 +1529,8 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 491116757867697167, guid: 84359146bf7af47e58c229d877e801d7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 84359146bf7af47e58c229d877e801d7, type: 3}
 --- !u!4 &2709362470382547192 stripped
 Transform:
@@ -1504,7 +1562,7 @@ GameObject:
   - component: {fileID: 3611561679376939862}
   - component: {fileID: 3611561679376939865}
   m_Layer: 0
-  m_Name: but
+  m_Name: Pelvis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1555,7 +1613,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8037001425573228718}
   m_Layer: 0
-  m_Name: L.knee.target_end
+  m_Name: LeftKneeTargetEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1586,7 +1644,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2505139831285972381}
   m_Layer: 0
-  m_Name: right_forearm_end
+  m_Name: RightForearmEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1619,7 +1677,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.00014615153, y: 0.010424122, z: -0.00041184566}
+  m_ConnectedAnchor: {x: 0.00024687883, y: 0.008791149, z: 0.00051274}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -1726,7 +1784,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.00028585046, y: 0.018133316, z: 0.0011403146}
+  m_ConnectedAnchor: {x: -0.0002858544, y: 0.018133333, z: 0.0011403076}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -1832,7 +1890,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.0000000064028414, y: 0.006972215, z: 0.000000008847561}
+  m_ConnectedAnchor: {x: -0.0000000030267977, y: 0.0069722203, z: 0}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -1967,7 +2025,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.0000000033032843, y: 0.0057953037, z: 6.548362e-11}
+  m_ConnectedAnchor: {x: -0.000000004889443, y: 0.0057953023, z: -0.000000008258212}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2059,7 +2117,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.0000000030267984, y: 0.0072461492, z: 0.000000016763805}
+  m_ConnectedAnchor: {x: -0.0000000012805685, y: 0.007246148, z: 0.0000000037252899}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2105,7 +2163,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.0000004580943, y: 0.01473123, z: -0.0036494012}
+  m_ConnectedAnchor: {x: -0.0000004597823, y: 0.014731249, z: -0.0036494068}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2288,7 +2346,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.00011272419, y: 0.0092356745, z: -0.00102038}
+  m_ConnectedAnchor: {x: -0.00010708448, y: 0.009302866, z: -0.0010896275}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2350,7 +2408,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.0000000033178367, y: 0.014707567, z: 0.000000009211363}
+  m_ConnectedAnchor: {x: -5.820766e-11, y: 0.014707589, z: 0.0000000019208528}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2456,7 +2514,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -4.0472514e-10, y: 0.011785853, z: 0.00000000896398}
+  m_ConnectedAnchor: {x: 2.1555024e-10, y: 0.011785867, z: -0.000000004831236}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2532,7 +2590,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.0007999973, y: 0.012619999, z: -0.00006999541}
+  m_ConnectedAnchor: {x: -0.0008000001, y: 0.01262001, z: -0.00006999634}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2652,7 +2710,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.0000000013969836, y: 0.017206987, z: 0.0000000027939695}
+  m_ConnectedAnchor: {x: 0.0000000011641531, y: 0.017206991, z: -0.000000005587939}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2788,7 +2846,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.0000000058789746, y: 0.0045177876, z: 0.0000000011350495}
+  m_ConnectedAnchor: {x: 0.00000000410364, y: 0.0045177867, z: -0.000000005500624}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2850,7 +2908,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -6.9849215e-10, y: 0.011539555, z: -9.313226e-10}
+  m_ConnectedAnchor: {x: -0.0000000032596301, y: 0.011539567, z: 0}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2927,7 +2985,7 @@ GameObject:
   - component: {fileID: 3611561678250276465}
   - component: {fileID: 5613446516943424344}
   m_Layer: 0
-  m_Name: left_thigh
+  m_Name: LeftThigh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2959,7 +3017,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6761538330598550068}
   m_Layer: 0
-  m_Name: Bone.014
+  m_Name: LeftFootRef
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2994,7 +3052,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4757169244832391806}
   m_Layer: 0
-  m_Name: R.knee.target_end
+  m_Name: RightKneeTargetEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3010,7 +3068,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8207314406144385301}
   m_Layer: 0
-  m_Name: left_calf_end
+  m_Name: LeftCalfEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3026,7 +3084,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9039576891198224464}
   m_Layer: 0
-  m_Name: Bone.009
+  m_Name: PelvisBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3159,7 +3217,7 @@ GameObject:
   - component: {fileID: 3611561679052807258}
   - component: {fileID: 4292861098813013623}
   m_Layer: 0
-  m_Name: tail_1
+  m_Name: Tail1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3177,7 +3235,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 2.3305802e-10, y: 0.019709218, z: 0.0000000018626451}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -3277,7 +3335,7 @@ GameObject:
   - component: {fileID: 4530535358653238027}
   - component: {fileID: 4530535358653238028}
   m_Layer: 0
-  m_Name: trex-new
+  m_Name: T-rex
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3325,7 +3383,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 3
@@ -3367,7 +3425,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5229086726180156453}
   m_Layer: 0
-  m_Name: tail_3_end
+  m_Name: Tail3End
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3386,7 +3444,7 @@ GameObject:
   - component: {fileID: 3611561679449344994}
   - component: {fileID: 3611561679449344995}
   m_Layer: 0
-  m_Name: right_arm
+  m_Name: RightArm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3402,7 +3460,7 @@ GameObject:
   m_Component:
   - component: {fileID: 456547937290395997}
   m_Layer: 0
-  m_Name: top_jaw_end
+  m_Name: TopJawEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3468,7 +3526,7 @@ GameObject:
   - component: {fileID: 3611561678555011050}
   - component: {fileID: 3611561678555011051}
   m_Layer: 0
-  m_Name: right_forearm
+  m_Name: RightForearm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3621,7 +3679,7 @@ GameObject:
   - component: {fileID: 3611561679065198269}
   - component: {fileID: 3611561679065198266}
   m_Layer: 0
-  m_Name: right_calf
+  m_Name: RightCalf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3637,7 +3695,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4017359065318899225}
   m_Layer: 0
-  m_Name: left_foot_end
+  m_Name: LeftFootEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3657,7 +3715,7 @@ GameObject:
   - component: {fileID: 3611561678267732327}
   - component: {fileID: 9179316024853024966}
   m_Layer: 0
-  m_Name: left_hip
+  m_Name: LeftHip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3691,7 +3749,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.0000000014661057, y: 0.008577498, z: 0.0000000056420504}
+  m_ConnectedAnchor: {x: 1.4961189e-10, y: 0.008577498, z: 8.026291e-10}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -3785,7 +3843,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8203461871509179700}
   m_Layer: 0
-  m_Name: R.knee.target
+  m_Name: RightKneeTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3804,7 +3862,7 @@ GameObject:
   - component: {fileID: 3611561679342913422}
   - component: {fileID: 5782808063097367799}
   m_Layer: 0
-  m_Name: lower_spine
+  m_Name: LowerSpine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3822,7 +3880,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 2.3305802e-10, y: 0.019709218, z: 0.0000000018626451}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -3969,7 +4027,7 @@ GameObject:
   - component: {fileID: 3611561677851543176}
   - component: {fileID: 8521292683523506585}
   m_Layer: 0
-  m_Name: left_foot
+  m_Name: LeftFoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3988,7 +4046,7 @@ GameObject:
   - component: {fileID: 3611561678282327106}
   - component: {fileID: 3611561678282327107}
   m_Layer: 0
-  m_Name: left_arm
+  m_Name: LeftArm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4008,7 +4066,7 @@ GameObject:
   - component: {fileID: 3611561678843726512}
   - component: {fileID: 6547013702985669202}
   m_Layer: 0
-  m_Name: right_foot
+  m_Name: RightFoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4071,7 +4129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 46193724195976600}
   m_Layer: 0
-  m_Name: right_foot_end
+  m_Name: RightFootEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4138,7 +4196,7 @@ GameObject:
   - component: {fileID: 3611561679131039517}
   - component: {fileID: 7035211332918278950}
   m_Layer: 0
-  m_Name: tail_2
+  m_Name: Tail2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4175,7 +4233,7 @@ GameObject:
   - component: {fileID: 7114357007878488964}
   - component: {fileID: 7114357007878488965}
   m_Layer: 0
-  m_Name: right_thigh
+  m_Name: RightThigh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4193,7 +4251,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.000000008221036, y: 0.008325089, z: 0.0000000031520813}
+  m_ConnectedAnchor: {x: -0.0000000031860736, y: 0.008325089, z: -0.0000000035490757}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -4304,7 +4362,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8266636339380951686}
   m_Layer: 0
-  m_Name: Bone.009_end
+  m_Name: PelvisBoneEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4323,7 +4381,7 @@ GameObject:
   - component: {fileID: 3611561679050562308}
   - component: {fileID: 3611561679050562309}
   m_Layer: 0
-  m_Name: tail_3
+  m_Name: Tail3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4339,7 +4397,7 @@ GameObject:
   m_Component:
   - component: {fileID: 328356013809225165}
   m_Layer: 0
-  m_Name: Bone.020
+  m_Name: RightFootRef
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4423,7 +4481,7 @@ GameObject:
   - component: {fileID: 3611561677876735017}
   - component: {fileID: 8108234813662843002}
   m_Layer: 0
-  m_Name: right_shoulder
+  m_Name: RightShoulder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4555,7 +4613,7 @@ GameObject:
   m_Component:
   - component: {fileID: 82619955431179851}
   m_Layer: 0
-  m_Name: L.knee.target
+  m_Name: LeftKneeTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4586,7 +4644,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2405968493723398428}
   m_Layer: 0
-  m_Name: Upper_spine
+  m_Name: UpperSpine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4648,7 +4706,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6936386086562907376}
   m_Layer: 0
-  m_Name: right_calf_end
+  m_Name: RightCalfEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4668,7 +4726,7 @@ GameObject:
   - component: {fileID: 3611561678746181483}
   - component: {fileID: 8942689169596202949}
   m_Layer: 0
-  m_Name: right_hip
+  m_Name: RightHip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4701,7 +4759,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9155455000722748341}
   m_Layer: 0
-  m_Name: left_forearm_end
+  m_Name: LeftForearmEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4733,7 +4791,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3286566256307153901}
   m_Layer: 0
-  m_Name: Bone.032_end
+  m_Name: SternumEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4766,7 +4824,7 @@ GameObject:
   - component: {fileID: 9178984241660589841}
   - component: {fileID: 9178984241660589840}
   m_Layer: 0
-  m_Name: bottom_jaw_end
+  m_Name: BottomJawEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
