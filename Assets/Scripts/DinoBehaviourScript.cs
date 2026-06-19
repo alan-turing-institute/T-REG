@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
-using Unity.MLAgentsExamples;
+using TReg;
 using Unity.MLAgents.Sensors;
-using BodyPart = Unity.MLAgentsExamples.BodyPart;
+using BodyPart = TReg.BodyPart;
 using Random = UnityEngine.Random;
 
 public class DinoBehaviourScript : Agent
