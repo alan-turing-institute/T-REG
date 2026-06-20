@@ -2,8 +2,17 @@
   "name": "com.nbarlow.t-reg",
   "version": "1.0.0",
   "displayName": "T-REG",
+  "description": "A ragdoll T-Rex agent that walks/hops toward a target using a pre-trained Unity ML-Agents model. Includes the trained model wired up for inference out of the box.",
   "unity": "6.4",
   "dependencies": {
-    "com.unity.ml-agents": "2.0.2"
-  }
+    "com.unity.ml-agents": "2.0.2",
+    "com.unity.ugui": "2.0.0"
+  },
+  "samples": [
+    {
+      "displayName": "T-Rex Demo",
+      "description": "A floor, light, camera, and the T-Rex + target already wired up and running inference with the trained model. Open the scene and press Play.",
+      "path": "Samples~/TRexDemo"
+    }
+  ]
 }
