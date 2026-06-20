@@ -323,20 +323,21 @@ public class DinoBehaviourScript : Agent
         if (targetPositionIndex == 8) {
             EndEpisode();
         } else {
-            // always move back towards the centre or to the other side of it
-            if (target.transform.position.x < 0f) {
-                target.transform.position = new Vector3(
-                    target.transform.position.x + Random.Range(0f,10f),
-                    target.transform.position.y,
-                    target.transform.position.z + 20f
-                );
-            } else {
-                target.transform.position = new Vector3(
-                    target.transform.position.x - Random.Range(0f,10f),
-                    target.transform.position.y,
-                    target.transform.position.z + 20f
-                );
+            // Advance in whatever direction the dino is currently facing, rather than a fixed world axis.
+            Vector3 forwardDir = Vector3.ProjectOnPlane(but.forward, Vector3.up);
+            if (forwardDir.sqrMagnitude < 0.0001f) {
+                forwardDir = Vector3.forward; // fallback if the dino is facing straight up/down
             }
+            forwardDir.Normalize();
+            Vector3 rightDir = Vector3.Cross(Vector3.up, forwardDir);
+
+            Vector3 currentPosition = target.transform.position;
+            float lateralOffset = Vector3.Dot(currentPosition, rightDir);
+
+            // always move back towards the centre line or to the other side of it
+            float lateralStep = lateralOffset < 0f ? Random.Range(0f, 10f) : -Random.Range(0f, 10f);
+
+            target.transform.position = currentPosition + forwardDir * 20f + rightDir * lateralStep;
         }
     }
 
